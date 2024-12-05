@@ -1,0 +1,69 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class TeacherFeedbackForm {
+    public static void main(String[] args) {
+        // Create the JFrame
+        JFrame frame = new JFrame("Teacher Feedback Form");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 500);
+
+        // Create the form panel
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        // Add components
+        panel.add(new JLabel("Name:"));
+        JTextField nameField = new JTextField(20);
+        panel.add(nameField);
+
+        panel.add(new JLabel("Subject:"));
+        JTextField subjectField = new JTextField(20);
+        panel.add(subjectField);
+
+        panel.add(new JLabel("Rating (1-5):"));
+        JComboBox<String> ratingBox = new JComboBox<>(new String[]{"1", "2", "3", "4", "5"});
+        panel.add(ratingBox);
+
+        panel.add(new JLabel("Comments:"));
+        JTextArea commentsArea = new JTextArea(5, 20);
+        commentsArea.setLineWrap(true);
+        commentsArea.setWrapStyleWord(true);
+        JScrollPane scrollPane = new JScrollPane(commentsArea);
+        panel.add(scrollPane);
+
+        // Add a submit button
+        JButton submitButton = new JButton("Submit");
+        panel.add(submitButton);
+
+        // Add action listener for the submit button
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String name = nameField.getText();
+                String subject = subjectField.getText();
+                String rating = (String) ratingBox.getSelectedItem();
+                String comments = commentsArea.getText();
+
+                try (FileWriter writer = new FileWriter("feedback.txt", true)) {
+                    writer.write("Name: " + name + "\n");
+                    writer.write("Subject: " + subject + "\n");
+                    writer.write("Rating: " + rating + "\n");
+                    writer.write("Comments: " + comments + "\n");
+                    writer.write("------\n");
+                    JOptionPane.showMessageDialog(frame, "Feedback submitted successfully!");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(frame, "Error saving feedback: " + ex.getMessage());
+                }
+            }
+        });
+
+        // Add panel to frame and set frame visibility
+        frame.add(panel, BorderLayout.CENTER);
+        frame.setVisible(true);
+    }
+}
